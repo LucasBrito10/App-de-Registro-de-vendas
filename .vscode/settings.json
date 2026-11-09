@@ -1,0 +1,8 @@
+{
+  "java.import.gradle.enabled": true,
+  "java.project.sourcePaths": ["app/src/main"],
+  "java.project.referencedLibraries": [
+    "/home/lucas/Android/Sdk/platforms/android-34/android.jar",
+    "app/.ide-libs/*.jar"
+  ]
+}

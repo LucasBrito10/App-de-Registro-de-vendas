@@ -1,0 +1,55 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.app.project'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.app.project'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'androidx.room:room-runtime:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+}
+
+tasks.register('exportIdeLibs') {
+    doLast {
+        def dir = file('.ide-libs')
+        dir.deleteDir()
+        dir.mkdirs()
+        configurations.getByName('debugCompileClasspath').incoming.artifactView {
+            attributes {
+                attribute(Attribute.of('artifactType', String), 'android-classes-jar')
+            }
+        }.artifacts.each { artifact ->
+            def id = artifact.id.componentIdentifier.displayName.replaceAll('[^A-Za-z0-9.-]', '_')
+            copy {
+                from artifact.file
+                into dir
+                rename { id + '.jar' }
+            }
+        }
+    }
+}

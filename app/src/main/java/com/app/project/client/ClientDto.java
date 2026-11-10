@@ -1,6 +1,6 @@
 package com.app.project.client;
 
-public class ClientDTO {
+public class ClientDto {
 
     
     private Long clientId;
@@ -8,22 +8,22 @@ public class ClientDTO {
     private String phone;
 
     // Construtor vazio (obrigatório para bibliotecas de serialização como Gson/Jackson)
-    public ClientDTO() {
+    public ClientDto() {
     }
 
     // Construtor completo
-    public ClientDTO(Long clientId, String name, String phone) {
+    public ClientDto(Long clientId, String name, String phone) {
         this.clientId = clientId;
         this.name = name;
         this.phone = phone;
     }
 
     // Getters e Setters
-    public Long getClientId() {
+    public Long getId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setId(Long clientId) {
         this.clientId = clientId;
     }
 

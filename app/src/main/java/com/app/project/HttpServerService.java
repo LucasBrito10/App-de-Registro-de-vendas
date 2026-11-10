@@ -6,8 +6,14 @@ import android.content.Intent;
 import android.os.IBinder;
 import com.app.project.server.NanoServer;
 import com.app.project.client.ClientController;
+import com.app.project.client.ClientService;
+import com.app.project.client.ClientRepository;
 import com.app.project.products.ProductController;
 import com.app.project.sale.SaleController;
+import com.app.project.sale.SaleService;
+import com.app.project.sale.SaleRepository;
+import com.app.project.products.ProductRepository;
+import com.app.project.products.ProductService;
 import com.app.project.shared.NotFound;
 import android.content.res.AssetManager;
 import android.app.Notification;
@@ -15,6 +21,9 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 import java.io.IOException;
+import com.app.project.client.ClientDao;
+import com.app.project.sale.SaleDao;
+import com.app.project.products.ProductDao;
 
 
 // Cria as instancias de objetos relacionados ao servidor HTTP e ao backend. 
@@ -30,13 +39,36 @@ public class HttpServerService extends Service {
         super.onCreate();
         setupForegroundNotification();
 
+        ApiDispatcher apiDispatcher = injectDependencies();
+
+        AssetManager assetManager = getAssets(); // Obtém o AssetManager do contexto do serviço
+
+        this.nanoServer = new NanoServer("127.0.0.1", 8080, apiDispatcher, assetManager);
+
+        try {
+            this.nanoServer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+        private ApiDispatcher injectDependencies() {
+
         //Aqui as dependências serão injetadas(Controllers,Services,Repositories,API) e o servidor HTTP será inicializado.
 
         
        
-        ClientRepository clientRepository = new ClientRepository();
-        ProductRepository productRepository = new ProductRepository();
-        SaleRepository saleRepository = new SaleRepository();
+        AppDatabase db = AppDatabase.getInstance(this);
+
+        ClientDao clientDao = db.clientDao();
+        ProductDao productDao = db.productDao();
+        SaleDao saleDao = db.saleDao();
+
+
+        ClientRepository clientRepository = new ClientRepository(clientDao);
+        ProductRepository productRepository = new ProductRepository(productDao);
+        SaleRepository saleRepository = new SaleRepository(saleDao);
        
         ClientService clientService = new ClientService(clientRepository);
         ProductService productService = new ProductService(productRepository);
@@ -49,18 +81,7 @@ public class HttpServerService extends Service {
 
         
         
-        ApiDispatcher apiDispatcher = new ApiDispatcher(clientsController, productsController, salesController, notFound);
-
-        AssetManager assetManager = getAssets(); // Obtém o AssetManager do contexto do serviço
-
-        this.nanoServer = new NanoServer("127.0.0.1", 8080, apiDispatcher, assetManager);
-
-        try {
-            this.nanoServer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
+        return new ApiDispatcher(clientsController, productsController, salesController, notFound);
     }
 
 

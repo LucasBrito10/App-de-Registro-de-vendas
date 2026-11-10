@@ -1,4 +1,4 @@
-package com.app.project.shared;
+package com.app.project.client;
 
 import androidx.room.Embedded;
 import androidx.room.Relation;

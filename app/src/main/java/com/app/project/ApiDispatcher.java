@@ -49,9 +49,7 @@ public class ApiDispatcher {
             } else {
                 return notFound.handleRequest(session);
             }
-
-
-
+        
         }
 
         return notFound.handleRequest(session);

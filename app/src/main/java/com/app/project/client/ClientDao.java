@@ -7,8 +7,6 @@ import androidx.room.Query;
 import androidx.room.Update;
 import androidx.room.Delete;
 import androidx.room.Transaction;
-
-import com.app.project.shared.ClientWithSales;
 import java.util.List;
 
 @Dao
@@ -25,11 +23,11 @@ public interface ClientDao {
 
     // Atualiza as informações de um cliente existente.
     @Update
-    void updateClient(Client client);
+    int updateClient(Client client);
 
     // Remove um cliente do banco de dados.
-    @Delete
-    void deleteClient(Client client);
+    @Query("DELETE FROM clients WHERE clientId = :id")
+    int deleteClient(long id);
 
     // Busca todos os clientes cadastrados sem as vendas associadas.
     @Query("SELECT * FROM clients ORDER BY name ASC")
@@ -57,5 +55,8 @@ public interface ClientDao {
     // Busca um cliente específico pelo ID, trazendo também todas as suas vendas.
     @Transaction
     @Query("SELECT * FROM clients WHERE clientId = :id")
-    ClientWithSales getClientWithSalesById(int id);
+    ClientWithSales getClientWithSalesById(long id);
+
+    @Query("SELECT * FROM clients WHERE name LIKE '%' || :name || '%' ORDER BY name ASC, clientId ASC LIMIT :size OFFSET :offset")
+    List<Client> getClientsByNamePage(String name, int size, int offset);
 }

@@ -8,10 +8,36 @@ import java.math.BigDecimal;
 public class Product {
     
     @PrimaryKey(autoGenerate = true)
-    public long productId;
+    private long productId;
     
-    public String name;
+    private String name;
     
-    // Requer o mesmo TypeConverter de BigDecimal configurado para a classe Sale.
-    public BigDecimal price;
+    private BigDecimal price;
+
+    public long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(long productId) {
+        this.productId = productId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+
+    
 }

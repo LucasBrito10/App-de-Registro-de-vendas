@@ -1,5 +1,6 @@
 package com.app.project.client;
 
+import com.app.project.shared.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import fi.iki.elonen.NanoHTTPD;
@@ -24,7 +25,7 @@ public class ClientController {
 
     public ClientController(ClientService clientService) {
         this.clientService = clientService;
-        this.gson = new Gson();
+        this.gson = GsonFactory.create();
     }
 
     public Response handleGetRequest(IHTTPSession session) {

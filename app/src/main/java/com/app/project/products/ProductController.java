@@ -1,5 +1,6 @@
 package com.app.project.products;
 
+import com.app.project.shared.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import fi.iki.elonen.NanoHTTPD;
@@ -25,7 +26,7 @@ public class ProductController {
 
     public ProductController(ProductService productService) {
         this.productService = productService;
-        this.gson = new Gson();
+        this.gson = GsonFactory.create();
     }
 
     

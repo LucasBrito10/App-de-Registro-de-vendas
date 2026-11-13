@@ -1,16 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Necessária para abrir o socket do servidor local (NanoHTTPD em 127.0.0.1:8080)
+         e para a WebView se conectar a ele, mesmo sem acesso à internet. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Serviço em primeiro plano: mantém o servidor vivo enquanto o app está em uso. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- Android 14+: cada serviço em primeiro plano precisa declarar seu tipo e a permissão
+         correspondente. Um servidor local não se encaixa nos tipos padrão, por isso "specialUse". -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!-- Android 13+: permite exibir a notificação do serviço em primeiro plano.
+         Sem ela o servidor funciona normalmente, mas a notificação fica oculta. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
+        android:name=".ProjectApplication"
         android:label="Registro de Vendas"
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
+        <!-- Servidor HTTP local (NanoHTTPD), iniciado pela ProjectApplication. -->
+        <service
+            android:name=".HttpServerService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+
+            <!-- Justificativa do tipo "specialUse", exigida pelo Android 14+
+                 (e lida pela Google Play na revisão, caso o app seja publicado). -->
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Servidor HTTP local (127.0.0.1) que fornece a interface e a API do aplicativo, que funciona offline." />
+        </service>
+
+        <!-- Tela principal: WebView que carrega o frontend servido pelo servidor local.
+             configChanges evita que a Activity seja recriada ao girar a tela ou abrir o teclado,
+             o que recarregaria a WebView e faria a SPA perder o estado (formulários, navegação). -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

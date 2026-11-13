@@ -8,7 +8,9 @@ import java.util.List;
 
 // Implementação do POJO para permitir uma busca de clientes mais eficiente, 
 // trazendo também as vendas associadas a cada cliente.
+
 public class ClientWithSales {
+    
     
     @Embedded
     public Client client;
@@ -17,5 +19,8 @@ public class ClientWithSales {
         parentColumn = "clientId",
         entityColumn = "client_id"
     )
+    
     public List<Sale> sales;
+
+
 }
